@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import { requireAuth } from '../middleware/auth';
 import { authRouter } from './auth';
 import { usersRouter } from './users';
 import { postsRouter } from './posts';
@@ -16,6 +17,10 @@ router.get('/health', (_req: Request, res: Response) => {
 });
 
 router.use('/auth', authRouter);
+router.use('/search', searchRouter);
+
+// Protected routes — require a valid JWT
+router.use(requireAuth);
 router.use('/users', usersRouter);
 router.use('/posts', postsRouter);
 router.use('/comments', commentsRouter);
@@ -23,4 +28,3 @@ router.use('/likes', likesRouter);
 router.use('/users', followersRouter);
 router.use('/messages', messagesRouter);
 router.use('/notifications', notificationsRouter);
-router.use('/search', searchRouter);
