@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import morgan from 'morgan';
 import { router } from './routes';
 import { errorHandler } from './middleware/error';
 import { apiLimiter, authLimiter } from './middleware/rateLimit';
@@ -7,6 +8,7 @@ import { apiLimiter, authLimiter } from './middleware/rateLimit';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(morgan(process.env['NODE_ENV'] === 'production' ? 'combined' : 'dev'));
 app.use(express.json());
 app.use('/api', apiLimiter);
 app.use('/api/auth', authLimiter);
