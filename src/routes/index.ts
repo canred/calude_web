@@ -5,6 +5,7 @@ import { commentsRouter } from './comments';
 import { likesRouter } from './likes';
 import { followersRouter } from './followers';
 import { messagesRouter } from './messages';
+import { notificationsRouter } from './notifications';
 
 export const router = Router();
 
@@ -18,3 +19,4 @@ router.use('/comments', commentsRouter);
 router.use('/likes', likesRouter);
 router.use('/users', followersRouter);
 router.use('/messages', messagesRouter);
+router.use('/notifications', notificationsRouter);
