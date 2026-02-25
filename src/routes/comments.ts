@@ -5,6 +5,82 @@ import { createCommentSchema, updateCommentSchema, idParamSchema } from '../sche
 
 export const commentsRouter = Router();
 
+/**
+ * @swagger
+ * /api/comments:
+ *   get:
+ *     tags: [Comments]
+ *     summary: Get all comments
+ *     security: [{ bearerAuth: [] }]
+ *     responses:
+ *       200:
+ *         description: List of comments
+ *   post:
+ *     tags: [Comments]
+ *     summary: Create a comment
+ *     security: [{ bearerAuth: [] }]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [body, postId, authorId]
+ *             properties:
+ *               body: { type: string }
+ *               postId: { type: integer }
+ *               authorId: { type: integer }
+ *     responses:
+ *       201:
+ *         description: Comment created
+ * /api/comments/{id}:
+ *   get:
+ *     tags: [Comments]
+ *     summary: Get a comment by ID
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *     responses:
+ *       200:
+ *         description: Comment found
+ *       404:
+ *         description: Comment not found
+ *   put:
+ *     tags: [Comments]
+ *     summary: Update a comment
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               body: { type: string }
+ *     responses:
+ *       200:
+ *         description: Comment updated
+ *   delete:
+ *     tags: [Comments]
+ *     summary: Delete a comment
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *     responses:
+ *       204:
+ *         description: Comment deleted
+ */
 commentsRouter.get('/', async (_req: Request, res: Response) => {
   const comments = await prisma.comment.findMany({ include: { author: true, post: true } });
   res.json({ comments });

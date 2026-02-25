@@ -5,6 +5,37 @@ import { searchQuerySchema } from '../schemas';
 
 export const searchRouter = Router();
 
+/**
+ * @swagger
+ * /api/search:
+ *   get:
+ *     tags: [Search]
+ *     summary: Search users, posts, and comments
+ *     security: []
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         required: true
+ *         schema: { type: string }
+ *         description: Search query string
+ *     responses:
+ *       200:
+ *         description: Search results
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 users:
+ *                   type: array
+ *                   items: { $ref: '#/components/schemas/User' }
+ *                 posts:
+ *                   type: array
+ *                   items: { $ref: '#/components/schemas/Post' }
+ *                 comments:
+ *                   type: array
+ *                   items: { $ref: '#/components/schemas/Comment' }
+ */
 searchRouter.get('/', validate(searchQuerySchema, 'query'), async (req: Request, res: Response) => {
   const { q } = req.query as { q: string };
 

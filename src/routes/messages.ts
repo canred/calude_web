@@ -11,7 +11,71 @@ const conversationQuerySchema = z.object({
   receiverId: z.string().regex(/^\d+$/),
 });
 
-// Get conversation between two users
+/**
+ * @swagger
+ * /api/messages:
+ *   get:
+ *     tags: [Messages]
+ *     summary: Get conversation between two users
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: query
+ *         name: senderId
+ *         required: true
+ *         schema: { type: integer }
+ *       - in: query
+ *         name: receiverId
+ *         required: true
+ *         schema: { type: integer }
+ *     responses:
+ *       200:
+ *         description: List of messages
+ *   post:
+ *     tags: [Messages]
+ *     summary: Send a message
+ *     security: [{ bearerAuth: [] }]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [body, senderId, receiverId]
+ *             properties:
+ *               body: { type: string }
+ *               senderId: { type: integer }
+ *               receiverId: { type: integer }
+ *     responses:
+ *       201:
+ *         description: Message sent
+ * /api/messages/{id}:
+ *   get:
+ *     tags: [Messages]
+ *     summary: Get a message by ID
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *     responses:
+ *       200:
+ *         description: Message found
+ *       404:
+ *         description: Message not found
+ *   delete:
+ *     tags: [Messages]
+ *     summary: Delete a message
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *     responses:
+ *       204:
+ *         description: Message deleted
+ */
 messagesRouter.get('/', validate(conversationQuerySchema, 'query'), async (req: Request, res: Response) => {
   const { senderId, receiverId } = req.query as { senderId: string; receiverId: string };
   const messages = await prisma.message.findMany({
