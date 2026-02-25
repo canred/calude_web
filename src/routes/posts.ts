@@ -1,5 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../db';
+import { validate } from '../middleware/validate';
+import { createPostSchema, updatePostSchema, idParamSchema } from '../schemas';
 
 export const postsRouter = Router();
 
@@ -8,7 +10,7 @@ postsRouter.get('/', async (_req: Request, res: Response) => {
   res.json({ posts });
 });
 
-postsRouter.get('/:id', async (req: Request, res: Response) => {
+postsRouter.get('/:id', validate(idParamSchema, 'params'), async (req: Request, res: Response) => {
   const post = await prisma.post.findUnique({
     where: { id: Number(req.params.id) },
     include: { author: true },
@@ -17,12 +19,12 @@ postsRouter.get('/:id', async (req: Request, res: Response) => {
   res.json({ post });
 });
 
-postsRouter.post('/', async (req: Request, res: Response) => {
+postsRouter.post('/', validate(createPostSchema), async (req: Request, res: Response) => {
   const post = await prisma.post.create({ data: req.body });
   res.status(201).json({ post });
 });
 
-postsRouter.put('/:id', async (req: Request, res: Response) => {
+postsRouter.put('/:id', validate(idParamSchema, 'params'), validate(updatePostSchema), async (req: Request, res: Response) => {
   const post = await prisma.post.update({
     where: { id: Number(req.params.id) },
     data: req.body,
@@ -30,7 +32,7 @@ postsRouter.put('/:id', async (req: Request, res: Response) => {
   res.json({ post });
 });
 
-postsRouter.delete('/:id', async (req: Request, res: Response) => {
+postsRouter.delete('/:id', validate(idParamSchema, 'params'), async (req: Request, res: Response) => {
   await prisma.post.delete({ where: { id: Number(req.params.id) } });
   res.status(204).send();
 });

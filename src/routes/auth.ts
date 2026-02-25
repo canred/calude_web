@@ -2,12 +2,14 @@ import { Router, Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../db';
+import { validate } from '../middleware/validate';
+import { registerSchema, loginSchema } from '../schemas';
 
 export const authRouter = Router();
 
 const JWT_SECRET = process.env['JWT_SECRET'] ?? 'change-me-in-production';
 
-authRouter.post('/register', async (req: Request, res: Response) => {
+authRouter.post('/register', validate(registerSchema), async (req: Request, res: Response) => {
   const { email, password, name } = req.body as { email: string; password: string; name?: string };
 
   const existing = await prisma.user.findUnique({ where: { email } });
@@ -20,7 +22,7 @@ authRouter.post('/register', async (req: Request, res: Response) => {
   res.status(201).json({ user: safeUser });
 });
 
-authRouter.post('/login', async (req: Request, res: Response) => {
+authRouter.post('/login', validate(loginSchema), async (req: Request, res: Response) => {
   const { email, password } = req.body as { email: string; password: string };
 
   const user = await prisma.user.findUnique({ where: { email } });

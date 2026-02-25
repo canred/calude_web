@@ -1,10 +1,18 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../db';
+import { validate } from '../middleware/validate';
+import { createMessageSchema, idParamSchema } from '../schemas';
+import { z } from 'zod';
 
 export const messagesRouter = Router();
 
+const conversationQuerySchema = z.object({
+  senderId: z.string().regex(/^\d+$/),
+  receiverId: z.string().regex(/^\d+$/),
+});
+
 // Get conversation between two users
-messagesRouter.get('/', async (req: Request, res: Response) => {
+messagesRouter.get('/', validate(conversationQuerySchema, 'query'), async (req: Request, res: Response) => {
   const { senderId, receiverId } = req.query as { senderId: string; receiverId: string };
   const messages = await prisma.message.findMany({
     where: {
@@ -19,7 +27,7 @@ messagesRouter.get('/', async (req: Request, res: Response) => {
   res.json({ messages });
 });
 
-messagesRouter.get('/:id', async (req: Request, res: Response) => {
+messagesRouter.get('/:id', validate(idParamSchema, 'params'), async (req: Request, res: Response) => {
   const message = await prisma.message.findUnique({
     where: { id: Number(req.params.id) },
     include: { sender: true, receiver: true },
@@ -28,12 +36,12 @@ messagesRouter.get('/:id', async (req: Request, res: Response) => {
   res.json({ message });
 });
 
-messagesRouter.post('/', async (req: Request, res: Response) => {
+messagesRouter.post('/', validate(createMessageSchema), async (req: Request, res: Response) => {
   const message = await prisma.message.create({ data: req.body });
   res.status(201).json({ message });
 });
 
-messagesRouter.delete('/:id', async (req: Request, res: Response) => {
+messagesRouter.delete('/:id', validate(idParamSchema, 'params'), async (req: Request, res: Response) => {
   await prisma.message.delete({ where: { id: Number(req.params.id) } });
   res.status(204).send();
 });

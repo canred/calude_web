@@ -1,5 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../db';
+import { validate } from '../middleware/validate';
+import { createCommentSchema, updateCommentSchema, idParamSchema } from '../schemas';
 
 export const commentsRouter = Router();
 
@@ -8,7 +10,7 @@ commentsRouter.get('/', async (_req: Request, res: Response) => {
   res.json({ comments });
 });
 
-commentsRouter.get('/:id', async (req: Request, res: Response) => {
+commentsRouter.get('/:id', validate(idParamSchema, 'params'), async (req: Request, res: Response) => {
   const comment = await prisma.comment.findUnique({
     where: { id: Number(req.params.id) },
     include: { author: true, post: true },
@@ -17,12 +19,12 @@ commentsRouter.get('/:id', async (req: Request, res: Response) => {
   res.json({ comment });
 });
 
-commentsRouter.post('/', async (req: Request, res: Response) => {
+commentsRouter.post('/', validate(createCommentSchema), async (req: Request, res: Response) => {
   const comment = await prisma.comment.create({ data: req.body });
   res.status(201).json({ comment });
 });
 
-commentsRouter.put('/:id', async (req: Request, res: Response) => {
+commentsRouter.put('/:id', validate(idParamSchema, 'params'), validate(updateCommentSchema), async (req: Request, res: Response) => {
   const comment = await prisma.comment.update({
     where: { id: Number(req.params.id) },
     data: req.body,
@@ -30,7 +32,7 @@ commentsRouter.put('/:id', async (req: Request, res: Response) => {
   res.json({ comment });
 });
 
-commentsRouter.delete('/:id', async (req: Request, res: Response) => {
+commentsRouter.delete('/:id', validate(idParamSchema, 'params'), async (req: Request, res: Response) => {
   await prisma.comment.delete({ where: { id: Number(req.params.id) } });
   res.status(204).send();
 });
