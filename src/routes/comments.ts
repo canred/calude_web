@@ -81,8 +81,13 @@ export const commentsRouter = Router();
  *       204:
  *         description: Comment deleted
  */
-commentsRouter.get('/', async (_req: Request, res: Response) => {
-  const comments = await prisma.comment.findMany({ include: { author: true, post: true } });
+commentsRouter.get('/', async (req: Request, res: Response) => {
+  const { postId } = req.query as { postId?: string };
+  const comments = await prisma.comment.findMany({
+    where: postId ? { postId: Number(postId) } : undefined,
+    include: { author: true, post: true },
+    orderBy: { createdAt: 'asc' },
+  });
   res.json({ comments });
 });
 

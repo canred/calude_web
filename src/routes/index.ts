@@ -26,5 +26,6 @@ router.use('/posts', postsRouter);
 router.use('/comments', commentsRouter);
 router.use('/likes', likesRouter);
 router.use('/users', followersRouter);
+router.use('/follows', followersRouter);
 router.use('/messages', messagesRouter);
 router.use('/notifications', notificationsRouter);

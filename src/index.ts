@@ -18,4 +18,8 @@ app.use('/api/auth', authLimiter);
 app.use('/api', router);
 app.use(errorHandler);
 
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
 export default app;
