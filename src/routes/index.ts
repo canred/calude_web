@@ -6,6 +6,7 @@ import { likesRouter } from './likes';
 import { followersRouter } from './followers';
 import { messagesRouter } from './messages';
 import { notificationsRouter } from './notifications';
+import { searchRouter } from './search';
 
 export const router = Router();
 
@@ -20,3 +21,4 @@ router.use('/likes', likesRouter);
 router.use('/users', followersRouter);
 router.use('/messages', messagesRouter);
 router.use('/notifications', notificationsRouter);
+router.use('/search', searchRouter);
