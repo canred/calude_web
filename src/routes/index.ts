@@ -4,6 +4,7 @@ import { postsRouter } from './posts';
 import { commentsRouter } from './comments';
 import { likesRouter } from './likes';
 import { followersRouter } from './followers';
+import { messagesRouter } from './messages';
 
 export const router = Router();
 
@@ -16,3 +17,4 @@ router.use('/posts', postsRouter);
 router.use('/comments', commentsRouter);
 router.use('/likes', likesRouter);
 router.use('/users', followersRouter);
+router.use('/messages', messagesRouter);

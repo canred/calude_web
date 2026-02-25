@@ -11,16 +11,18 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  name      String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  posts     Post[]
-  comments  Comment[]
-  likes     Like[]
-  following Follow[]  @relation("follower")
-  followers Follow[]  @relation("following")
+  id              Int       @id @default(autoincrement())
+  email           String    @unique
+  name            String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  posts           Post[]
+  comments        Comment[]
+  likes           Like[]
+  following       Follow[]  @relation("follower")
+  followers       Follow[]  @relation("following")
+  sentMessages    Message[] @relation("sender")
+  receivedMessages Message[] @relation("receiver")
 }
 
 model Post {
@@ -45,6 +47,16 @@ model Comment {
   author    User     @relation(fields: [authorId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Message {
+  id         Int      @id @default(autoincrement())
+  body       String
+  senderId   Int
+  sender     User     @relation("sender", fields: [senderId], references: [id])
+  receiverId Int
+  receiver   User     @relation("receiver", fields: [receiverId], references: [id])
+  createdAt  DateTime @default(now())
 }
 
 model Follow {
